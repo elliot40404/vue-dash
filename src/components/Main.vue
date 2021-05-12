@@ -113,7 +113,7 @@ export default {
       this.graph3.series[0].data.push(c);
     },
     async api() {
-      const req = await fetch("http://localhost:8081/api/data");
+      const req = await fetch("/api/data");
       const res = await req.json();
       if (res !== "") {
         this.update(res.a, res.b, res.c);
