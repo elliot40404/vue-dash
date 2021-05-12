@@ -3,23 +3,29 @@
     <h1>DASHBOARD</h1>
     <div class="grid">
       <div class="box box_one">
-        <apexchart
-          width="400"
-          type="donut"
-          :options="graph1.options"
-          :series="graph1.series"
-        ></apexchart>
-        <apexchart
-          width="400"
-          type="radialBar"
-          :options="graph1.options"
-          :series="graph1.series"
-        ></apexchart>
+        <div class="c">
+          <apexchart
+            width="100%"
+            height="80%"
+            type="donut"
+            :options="graph1.options"
+            :series="graph1.series"
+          ></apexchart>
+        </div>
+        <div class="c">
+          <apexchart
+            width="100%"
+            height="90%"
+            type="radialBar"
+            :options="radialBar"
+            :series="graph1.series"
+          ></apexchart>
+        </div>
       </div>
       <div class="box box_two">
         <apexchart
-          width="800"
-          height="350"
+          width="100%"
+          height="90%"
           type="bar"
           :options="graph2.options"
           :series="graph2.series"
@@ -27,8 +33,8 @@
       </div>
       <div class="box box_three">
         <apexchart
-          width="1700"
-          height="350"
+          width="100%"
+          height="90%"
           type="line"
           :options="graph2.options"
           :series="graph3.series"
@@ -44,7 +50,11 @@ export default {
   data() {
     return {
       graph1: {
-        options: {},
+        options: {
+          legend: {
+            show: false,
+          },
+        },
         series: [44, 55, 41, 17, 15],
       },
       graph2: {
@@ -61,19 +71,53 @@ export default {
             data: [11, 52, 30, 90, 29, 69],
           },
         ],
-      }
+      },
+      radialBar: {
+        plotOptions: {
+          radialBar: {
+            dataLabels: {
+              total: {
+                show: true,
+                label: "Total",
+                formatter: function (w) {
+                  return 249;
+                },
+              },
+            },
+          },
+        },
+      },
     };
   },
+  mounted() {
+    setInterval(() => {
+      this.api();
+    }, 1000 * 30);
+  },
+  created() {
+    const size = document.body.clientWidth
+    window.addEventListener('resize', (e) => {
+      const sizem = document.body.clientWidth
+      if (Math.abs(size - sizem) > 100) {
+        window.location.replace(location.href)
+      }
+    })
+  },
   methods: {
-    add() {
-      this.graph1.series[Math.floor((Math.random() * 10) / 2)] = Math.floor(
-        (Math.random() * 100) / 2
-      );
+    update(a, b, c) {
+      this.graph1.series.shift();
+      this.graph1.series.push(a);
+      this.graph2.series[0].data.shift();
+      this.graph2.series[0].data.push(b);
+      this.graph3.series[0].data.shift();
+      this.graph3.series[0].data.push(c);
     },
-    add2() {
-      this.graph2.series[0].data[
-        Math.floor((Math.random() * 10) / 2)
-      ] = Math.floor((Math.random() * 100) / 2);
+    async api() {
+      const req = await fetch("http://localhost:8081/api/data");
+      const res = await req.json();
+      if (res !== "") {
+        this.update(res.a, res.b, res.c);
+      }
     },
   },
 };
@@ -109,13 +153,39 @@ h1 {
 }
 .box_one {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  .c {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }
 .box_two {
   padding: 10px;
 }
 .box_three {
   grid-column: 1 / -1;
+}
+@media only screen and (max-width: 1300px) {
+  .grid {
+    height: 85%;
+    width: 95%;
+    align-self: center;
+    justify-self: center;
+    display: grid;
+    padding: 10px;
+    grid-template-columns: auto;
+    grid-auto-rows: minmax(400px,auto);
+    gap: 20px;
+  }
+  .box{
+    min-height: 250px;
+  }
+}
+@media only screen and (max-width: 769px) {
+  .box_one {
+    flex-direction: column;
+    min-height: 500px;
+  }
 }
 </style>

@@ -19,6 +19,9 @@ export default {
   margin: 0%;
   box-sizing: border-box;
 }
+body {
+  background: #171721;
+}
 .route {
   margin-left: 100px;
 }

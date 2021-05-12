@@ -101,4 +101,7 @@ ion-icon {
     }
   }
 }
+@media only screen and (max-width: 800px) {
+  // TODO: add mobile support
+}
 </style>
